@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <stdio.h>
 
 /*  CHIP 8 Emulator. Written by ELORK 
     repo: github.com/ELORK/Emulators
@@ -12,11 +13,16 @@
 #define CHIP_WIDTH      640
 #define CHIP_HEIGHT     320
 
+#define printop(x) printf("%4x\n", x)
+
 enum bool {
      true = 1,
      false = 0,
 };
 typedef enum bool bool;
+
+typedef unsigned short _chipopcode;
+typedef unsigned char u8;
 
 static unsigned int     pc;
 static unsigned char    ram[CHIP_RAMSIZE];
@@ -28,6 +34,10 @@ SDL_Window *window;
 SDL_Renderer *renderer;
 
 static void emu_init(void);
+static void emu_chip_nextinstr(void);
+static _chipopcode emu_chip_getopcode(u8, u8);
+static void emu_chip_decode_and_execute(_chipopcode);
+static int emu_chip_readrom(const char *);
 static void emu_run(void);
 static void emu_free(void);
 
@@ -43,6 +53,48 @@ static void emu_init(void)
   
   int i;
   pc = CHIP_ENTRYPOINT;
+
+  for (i = 0; i < CHIP_RAMSIZE; i++) {
+    ram[i] = 0;
+  }
+
+  extern const char *romname;
+  emu_chip_readrom(romname);
+}
+
+static _chipopcode emu_chip_getopcode(u8 b1, u8 b2)
+{
+  _chipopcode opcode = b1;
+  return (opcode<<7) | b2;
+}
+
+static int emu_chip_readrom(const char *path)
+{
+  int i, c;
+  FILE* fp = fopen(path, "rb");
+
+  for (i = 0; (c = getc(fp)) != EOF; i++) {
+    ram[pc+i] = c;
+  }
+  
+  fclose(fp);
+
+  //size of the rom
+  return i+1;
+}
+
+static void emu_chip_decode(_chipopcode opcode)
+{
+  printop(opcode);
+}
+
+static void emu_chip_nextinstr(void)
+{
+  if (pc > 0xfff) {
+    pc = CHIP_ENTRYPOINT;
+  }
+  _chipopcode opcode = emu_chip_getopcode(ram[pc++], ram[pc++]);
+  emu_chip_decode(opcode);
 }
 
 static void emu_run(void)
@@ -56,7 +108,7 @@ static void emu_run(void)
       }
     }
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xff);
-    SDL_RenderClear(renderer);
+    emu_chip_nextinstr();
   }
 }
 
