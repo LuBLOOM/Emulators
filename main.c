@@ -3,9 +3,6 @@
 extern void _entrypoint_emu(void);
 const char *romname;
 
-/* 
-*/
-
 int main(int argc, char **argv)
 {
   if (argc == 1) {
@@ -16,3 +13,4 @@ int main(int argc, char **argv)
   }
   _entrypoint_emu();
 }
+

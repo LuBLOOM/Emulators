@@ -64,8 +64,8 @@ static void emu_init(void)
 
 static _chipopcode emu_chip_getopcode(u8 b1, u8 b2)
 {
-  _chipopcode opcode = b1;
-  return (opcode<<7) | b2;
+  _chipopcode opcode = b2;
+  return (opcode<<7) | b1;
 }
 
 static int emu_chip_readrom(const char *path)
@@ -75,17 +75,30 @@ static int emu_chip_readrom(const char *path)
 
   for (i = 0; (c = getc(fp)) != EOF; i++) {
     ram[pc+i] = c;
-  }
+  } 
   
   fclose(fp);
 
+  sp = pc + i+1;
+  
   //size of the rom
   return i+1;
 }
 
 static void emu_chip_decode(_chipopcode opcode)
 {
-  printop(opcode);
+  switch (opcode & 0xf000) {
+  case 0x0000:
+    if (opcode == 0x00e0) {
+      SDL_RenderClear(renderer);
+    } else if (opcode == 0x00ee) {
+      ram[sp--] = pc;
+    }
+    break;
+  case 0x1000:
+    ram[++sp] = pc;
+    break;
+  }
 }
 
 static void emu_chip_nextinstr(void)
