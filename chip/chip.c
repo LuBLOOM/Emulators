@@ -15,6 +15,8 @@
 #define EMU_CHIP_KEYCOUNT 0x10
 #define EMU_CHIP_KEYBYTES 0x50
 
+#define EMU_CHIP_TICK 10
+
 enum bool {
         true = 1,
         false = 0,
@@ -73,9 +75,12 @@ static unsigned char EMU_CHIP_NUMFONT[EMU_CHIP_KEYBYTES] = {
         0xf0, 0x80, 0xf0, 0x80, 0x80,
 };
 
-SDL_Texture *texture_display;
+static SDL_Texture *texture_display;
 SDL_Renderer *renderer;
 SDL_Window *window;
+
+static unsigned int curr_time;
+static unsigned int prev_time;
 
 void 
 _entrypoint_emu_chip(void);
@@ -107,18 +112,22 @@ emu_chip_showdisplay(void);
 static void 
 emu_chip_showpixels(void);
 
+static inline void
+emu_chip_tick(void);
+
 static void 
 emu_chip_init(void)
 {
         SDL_Init(SDL_INIT_VIDEO);
-        texture_display = SDL_CreateTexture(renderer, 0, 0,
-                EMU_CHIP_WIDTH, EMU_CHIP_HEIGHT);
 
         window = SDL_CreateWindow("CHIP8", SDL_WINDOWPOS_UNDEFINED,
                 SDL_WINDOWPOS_UNDEFINED, EMU_CHIP_SCREENWIDTH,
                 EMU_CHIP_SCREENHEIGHT, SDL_WINDOW_SHOWN);
 
         renderer = SDL_CreateRenderer(window, -1, 0);
+
+        texture_display = SDL_CreateTexture(renderer, 0, 0,
+                EMU_CHIP_WIDTH, EMU_CHIP_HEIGHT);
 
         pc = EMU_CHIP_ENTRYPOINT;
         I = sp = ST = DT = key_state = 0;
@@ -209,7 +218,7 @@ emu_chip_decode_and_execute(void)
                                         pc += 2;
                                         break;
                                 default:
-                                        fprintf(stdout, "Unsupported opcode\n");
+                                        fprintf(stderr, "Unsupported opcode\n");
                                         return;
                         }
                         break;
@@ -305,7 +314,7 @@ emu_chip_decode_and_execute(void)
                                         pc += 2;
                                         break;
                                 default:
-                                        fprintf(stdout, "Unsupported opcode\n");
+                                        fprintf(stderr, "Unsupported opcode\n");
                                         return;
                         }
                         break;
@@ -341,14 +350,14 @@ emu_chip_decode_and_execute(void)
                                         }
                                         break;
                                 case 0x00a1:
-                                        if (key_state&(1<<v[(opcode & 0x0f00)>>8]) == 0) {
+                                        if ((key_state&(1<<v[(opcode & 0x0f00)>>8])>>v[(opcode & 0x0f00)>>8]) == 0) {
                                                 pc += 4;
                                         } else {
                                                 pc += 2;
                                         }
                                         break;
                                 default:
-                                        fprintf(stdout, "Unsupported opcode\n");
+                                        fprintf(stderr, "Unsupported opcode\n");
                         }
                         break;
                 case 0xf000:
@@ -358,14 +367,14 @@ emu_chip_decode_and_execute(void)
                                         pc += 2;
                                         break;
                                 case 0x000a:
-                                        for (i = 0; i < 16; i++) {
+                                        pressed = false;
+                                        for (i = 0; i < 0x10; i++) {
                                                 if (key_state&(1<<i) != 0) {
                                                         v[(opcode & 0x0f00)>>8] = i;
                                                         pressed = true;
                                                 }
                                         }
                                         if (!pressed) {
-                                                pressed = false;
                                                 return;
                                         }
 
@@ -415,11 +424,11 @@ emu_chip_decode_and_execute(void)
                                         pc += 2;
                                         break;
                                 default:
-                                        fprintf(stdout, "Undefined opcode\n");
+                                        fprintf(stderr, "Undefined opcode\n");
                         }
                         break;
                 default:
-                        fprintf(stdout, "Undefined opcode\n");
+                        fprintf(stderr, "Undefined opcode\n");
         }
         if (DT > 0) {
                 --DT;
@@ -463,6 +472,8 @@ emu_chip_run(void)
         SDL_Event event;
         bool running = true;
 
+        prev_time = SDL_GetTicks() + EMU_CHIP_TICK;
+
         while (running) {
                 while (SDL_PollEvent(&event)) {
 
@@ -503,9 +514,11 @@ emu_chip_run(void)
                 SDL_UpdateTexture(texture_display, NULL, 
                         DISPLAY_PIXELS, 64 * sizeof(unsigned int));
 
-                emu_chip_showpixels();
                 SDL_RenderCopy(renderer, texture_display, NULL, NULL);
                 SDL_RenderPresent(renderer);
+                emu_chip_tick();
+                SDL_Delay(curr_time);
+                prev_time += EMU_CHIP_TICK;
         }
 }
 
@@ -527,6 +540,17 @@ emu_chip_draw(unsigned char vx, unsigned char vy, unsigned char n)
                 }
         }
 
+}
+
+static inline void
+emu_chip_tick(void)
+{
+        curr_time = SDL_GetTicks();
+        if (prev_time <= curr_time) {
+                curr_time = 0;
+        } else {
+                curr_time = prev_time - curr_time;
+        }
 }
 
 static void 
