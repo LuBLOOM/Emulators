@@ -3,6 +3,13 @@
 #include <stdlib.h>
 #include <time.h>
 
+/*      Author: ELORK 
+        repo: www.github.com/ELORK/Emulators.git
+        resources: https://en.wikipedia.org/wiki/CHIP-8 
+        && http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#2.2
+        contact: elork01@gmail.com
+*/
+
 #define EMU_CHIP_WIDTH 64
 #define EMU_CHIP_HEIGHT 32
 #define EMU_CHIP_SCREENWIDTH 640
@@ -23,8 +30,8 @@ enum bool {
 };
 typedef enum bool bool;
 
-SDL_Window *window;
-SDL_Renderer *renderer;
+extern SDL_Window *window;
+extern SDL_Renderer *renderer;
 
 static unsigned short pc;
 static unsigned char sp;
@@ -76,8 +83,6 @@ static unsigned char EMU_CHIP_NUMFONT[EMU_CHIP_KEYBYTES] = {
 };
 
 static SDL_Texture *texture_display;
-SDL_Renderer *renderer;
-SDL_Window *window;
 
 static unsigned int curr_time;
 static unsigned int prev_time;
@@ -118,14 +123,6 @@ emu_chip_tick(void);
 static void 
 emu_chip_init(void)
 {
-        SDL_Init(SDL_INIT_VIDEO);
-
-        window = SDL_CreateWindow("CHIP8", SDL_WINDOWPOS_UNDEFINED,
-                SDL_WINDOWPOS_UNDEFINED, EMU_CHIP_SCREENWIDTH,
-                EMU_CHIP_SCREENHEIGHT, SDL_WINDOW_SHOWN);
-
-        renderer = SDL_CreateRenderer(window, -1, 0);
-
         texture_display = SDL_CreateTexture(renderer, 0, 0,
                 EMU_CHIP_WIDTH, EMU_CHIP_HEIGHT);
 
@@ -159,7 +156,7 @@ emu_chip_load_rom(void)
 {
         unsigned int i;
 
-        extern const char *romname;
+        extern char romname[1024];
         FILE *rom = fopen(romname, "rb");
 
         if (NULL == rom) {
@@ -204,6 +201,8 @@ emu_chip_decode_and_execute(void)
 
         unsigned int i; bool pressed;
 
+        printf("%4x\n", pc);
+
         switch (opcode & 0xf000) {
                 case 0x0000:
                         switch (opcode & 0x00ff) {
@@ -219,7 +218,7 @@ emu_chip_decode_and_execute(void)
                                         break;
                                 default:
                                         fprintf(stderr, "Unsupported opcode\n");
-                                        return;
+                                        pc += 2;
                         }
                         break;
                 case 0x1000:
@@ -315,7 +314,7 @@ emu_chip_decode_and_execute(void)
                                         break;
                                 default:
                                         fprintf(stderr, "Unsupported opcode\n");
-                                        return;
+                                        pc += 2;
                         }
                         break;
                 case 0x9000:
@@ -358,6 +357,7 @@ emu_chip_decode_and_execute(void)
                                         break;
                                 default:
                                         fprintf(stderr, "Unsupported opcode\n");
+                                        pc += 2;
                         }
                         break;
                 case 0xf000:
@@ -424,10 +424,12 @@ emu_chip_decode_and_execute(void)
                                         pc += 2;
                                         break;
                                 default:
+                                        pc += 2;
                                         fprintf(stderr, "Undefined opcode\n");
                         }
                         break;
                 default:
+                        pc += 2;
                         fprintf(stderr, "Undefined opcode\n");
         }
         if (DT > 0) {
@@ -453,8 +455,6 @@ emu_chip_free(void)
         for (i = 0; i < EMU_CHIP_REGSIZE; i++) {
                 v[i] = 0x00;
         }
-
-        SDL_Quit();
 }
 
 static inline unsigned short 
