@@ -225,7 +225,7 @@ size_t maxsize;
 
 void _entrypoint_interface(void);
 
-static voidinterface_init(void);
+static void interface_init(void);
 
 static void  interface_render(void);
 
