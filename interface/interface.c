@@ -16,13 +16,131 @@ enum bool {
 };
 typedef enum bool bool;
 
+static unsigned char esc_bitmap[32 * 32] = {
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,
+	1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,
+	1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,
+	1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+};
+static SDL_Texture *esc_button_on;
+static SDL_Texture *esc_button_off;
+static SDL_Rect esc_dest;
+static bool esc_pressed;
+
+static unsigned char up_bitmap[32 * 32] = {
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,
+	1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,
+	1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+};
+
+static SDL_Texture *up_button_on;
+static SDL_Texture *up_button_off;
+static SDL_Rect up_dest;
+static bool up_pressed;
+
+static unsigned char down_bitmap[32 * 32] = {
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,
+	1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,
+	1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+};
+
+static SDL_Texture *down_button_on;
+static SDL_Texture *down_button_off;
+static SDL_Rect down_dest;
+static bool down_pressed;
+
 #ifdef __CHIP__
 
 #define CHIP_BITMAP_WIDTH 0x40
 #define CHIP_BITMAP_HEIGHT 0x40
 
-extern void 
-_entrypoint_emu_chip();
+extern void _entrypoint_emu_chip();
 
 static SDL_Rect chip_dest;
 static SDL_Texture *chip_access_off;
@@ -105,20 +223,15 @@ extern SDL_Renderer *renderer;
 extern char romname[1024];
 size_t maxsize;
 
-void 
-_entrypoint_interface(void);
+void _entrypoint_interface(void);
 
-static void
-interface_init(void);
+static voidinterface_init(void);
 
-static void  
-interface_render(void);
+static void  interface_render(void);
 
-static void 
-interface_free(void);
+static void interface_free(void);
 
-static void 
-interface_init(void)
+static void interface_init(void)
 {
 	unsigned int i;
 
@@ -137,6 +250,8 @@ interface_init(void)
 	chip_access_off = SDL_CreateTexture(renderer, 0, 0, CHIP_BITMAP_WIDTH, CHIP_BITMAP_HEIGHT);
 	chip_access_on = SDL_CreateTexture(renderer, 0, 0, CHIP_BITMAP_WIDTH, CHIP_BITMAP_HEIGHT);
 
+	chip_hovered = false;
+
 	chip_dest.w = CHIP_BITMAP_WIDTH;
 	chip_dest.h = CHIP_BITMAP_HEIGHT;
 	chip_dest.x = (INTERFACE_WIDTH-chip_dest.w)/2;
@@ -154,14 +269,76 @@ interface_init(void)
 	SDL_UpdateTexture(chip_access_on, NULL, chip_bitmap_pixels_on, 64 * sizeof(unsigned int));
 
 	#endif
+
+	esc_button_on = SDL_CreateTexture(renderer, 0, 0, 32, 32);
+	esc_button_off = SDL_CreateTexture(renderer, 0, 0, 32, 32);
+
+	esc_pressed = false;
+
+	esc_dest.w = 32;
+	esc_dest.h = 32;
+	esc_dest.x = (INTERFACE_WIDTH - (esc_dest.w*1.5));
+	esc_dest.y = 10;
+	unsigned int esc_bitmap_pixels_on[32*32] = {0};
+	unsigned int esc_bitmap_pixels_off[32*32] = {0};
+	for (i = 0; i < (32*32); i++) {
+		unsigned int pixel = esc_bitmap[i];
+		esc_bitmap_pixels_off[i] = (0x00ffffff * pixel);
+		esc_bitmap_pixels_on[i] = ~esc_bitmap_pixels_off[i];
+		esc_bitmap_pixels_off[i] |= 0xff000000;
+		esc_bitmap_pixels_on[i] |= 0x00ff0000;
+	}
+	SDL_UpdateTexture(esc_button_on, NULL, esc_bitmap_pixels_on, 32 * sizeof(unsigned int));
+	SDL_UpdateTexture(esc_button_off, NULL, esc_bitmap_pixels_off, 32 * sizeof(unsigned int));
+
+	up_button_on = SDL_CreateTexture(renderer, 0, 0, 32, 32);
+	up_button_off = SDL_CreateTexture(renderer, 0 ,0, 32, 32);
+
+	up_pressed  = false;
+
+	up_dest.w = 32;
+	up_dest.h = 32;
+	up_dest.x = up_dest.w;
+	up_dest.y = (INTERFACE_HEIGHT - (up_dest.h))/2;
+	unsigned int up_bitmap_pixels_on[32*32] = {0};
+	unsigned int up_bitmap_pixels_off[32*32] = {0};
+	for (i = 0; i < (32 * 32); i++) {
+		unsigned int pixel = up_bitmap[i];
+		up_bitmap_pixels_off[i] = (0x00ffffff * pixel);
+		up_bitmap_pixels_on[i] = ~up_bitmap_pixels_off[i];
+		up_bitmap_pixels_off[i] |= 0xff000000;
+		up_bitmap_pixels_on[i] |= 0x00ff0000;
+	}
+	SDL_UpdateTexture(up_button_on, NULL, up_bitmap_pixels_on, 32 * sizeof(unsigned int));
+	SDL_UpdateTexture(up_button_off, NULL, up_bitmap_pixels_off, 32 * sizeof(unsigned int));
+
+	down_button_on = SDL_CreateTexture(renderer, 0, 0, 32, 32);
+	down_button_off = SDL_CreateTexture(renderer, 0, 0, 32, 32);
+
+	down_pressed = false;
+
+	down_dest.w = 32;
+	down_dest.h = 32;
+	down_dest.x = down_dest.w;
+	down_dest.y = (INTERFACE_HEIGHT - (down_dest.h*4))/2;
+	unsigned int down_bitmap_pixels_on[32*32] = {0};
+	unsigned int down_bitmap_pixels_off[32*32] = {0};
+	for (i = 0; i < (32 * 32); i++) {
+		unsigned int pixel = down_bitmap[i];
+		down_bitmap_pixels_off[i] = (0x00ffffff * pixel);
+		down_bitmap_pixels_on[i] = ~down_bitmap_pixels_off[i];
+		down_bitmap_pixels_off[i] |= 0xff000000;
+		down_bitmap_pixels_on[i] |= 0x00ff0000;
+	}
+	SDL_UpdateTexture(down_button_on, NULL, down_bitmap_pixels_on, 32 * sizeof(unsigned int));
+	SDL_UpdateTexture(down_button_off, NULL, down_bitmap_pixels_off, 32 * sizeof(unsigned int));
 }
 
-static void
-interface_render(void)
+static void interface_render(void)
 {
-
 	bool interface_running = true;
 	SDL_Event event;
+	int i;
 
 	while (interface_running) {
 		while (SDL_PollEvent(&event)) {
@@ -179,13 +356,43 @@ interface_render(void)
 				&& event.button.button == SDL_BUTTON_LEFT && chip_hovered) {
 				FILE *zenity_fd = popen("zenity --file-selection", "r");
 				fgets(romname, maxsize, zenity_fd);
+				i = 0;
+				while (romname[++i] != '\n')
+					;
+				romname[i] = '\0';
 				fclose(zenity_fd);
 				_entrypoint_emu_chip();
 			}
 			#endif
+
+			if (event.type == SDL_KEYDOWN) {
+				if (event.key.keysym.sym == SDLK_ESCAPE) {
+					esc_pressed = true;
+				} else if (event.key.keysym.sym == SDLK_UP
+					|| event.key.keysym.sym == SDLK_w) {
+					up_pressed = true;
+				} else if (event.key.keysym.sym == SDLK_DOWN
+					|| event.key.keysym.sym == SDLK_s) {
+					down_pressed = true;
+				}
+			}
+
+			if (event.type == SDL_KEYUP) {
+				if (event.key.keysym.sym == SDLK_ESCAPE) {
+					esc_pressed = false;
+					interface_running = false;
+				} else if (event.key.keysym.sym == SDLK_UP
+					|| event.key.keysym.sym == SDLK_w) {
+					up_pressed = false;
+				} else if (event.key.keysym.sym == SDLK_DOWN
+					|| event.key.keysym.sym == SDLK_s) {
+					down_pressed = false;
+				}
+			}
 		}
 		SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xff);
 		SDL_RenderClear(renderer);
+
 		#ifdef __CHIP__
 		if (chip_hovered) {
 			SDL_RenderCopy(renderer, chip_access_on, NULL, &chip_dest);
@@ -193,20 +400,37 @@ interface_render(void)
 			SDL_RenderCopy(renderer, chip_access_off, NULL, &chip_dest);
 		}
 		#endif
+
+		if (esc_pressed) {
+			SDL_RenderCopy(renderer, esc_button_on, NULL, &esc_dest);
+		} else {
+			SDL_RenderCopy(renderer, esc_button_off, NULL, &esc_dest);
+		}
+
+		if (up_pressed) {
+			SDL_RenderCopy(renderer, up_button_on, NULL, &up_dest);
+		} else {
+			SDL_RenderCopy(renderer, up_button_off, NULL, &up_dest);
+		}
+
+		if (down_pressed) {
+			SDL_RenderCopy(renderer, down_button_on, NULL, &down_dest);
+		} else {
+			SDL_RenderCopy(renderer, down_button_off, NULL, &down_dest);
+		}
+
 		SDL_RenderPresent(renderer);
 	}
 }
 
-static void 
-interface_free(void)
+static void interface_free(void)
 {
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
 }
 
-void 
-_entrypoint_interface(void)
+void _entrypoint_interface(void)
 {
 	interface_init();
 	interface_render();
