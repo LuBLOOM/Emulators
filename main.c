@@ -11,12 +11,10 @@ typedef struct SDL_Renderer SDL_Renderer;
 SDL_Window *window;
 SDL_Renderer *renderer;
 
-extern void 
-_entrypoint_interface(void);
+extern void _entrypoint_interface(void);
 char romname[1024];
 
-int 
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
         _entrypoint_interface();
 }

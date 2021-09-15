@@ -10,9 +10,6 @@
         contact: elork01@gmail.com
 */
 
-//need to fix button inputs
-//for some reason, they don't work 
-
 #define EMU_CHIP_WIDTH 64
 #define EMU_CHIP_HEIGHT 32
 #define EMU_CHIP_SCREENWIDTH 640
@@ -89,41 +86,20 @@ static SDL_Texture *texture_display;
 static unsigned int curr_time;
 static unsigned int prev_time;
 
-void 
-_entrypoint_emu_chip(void);
+void _entrypoint_emu_chip(void);
+static void emu_chip_init(void);
+static unsigned short emu_chip_load_rom(void);
+static void emu_chip_run(void);
+static void emu_chip_decode_and_execute(void);
+static void emu_chip_free(void);
+static inline unsigned short emu_chip_getopcode(unsigned char, unsigned char);
+static void emu_chip_draw(unsigned char vx, unsigned char vy, unsigned char n);
+static void emu_chip_showdisplay(void);
+static void emu_chip_showpixels(void);
 
-static void
-emu_chip_init(void);
+static inline void emu_chip_tick(void);
 
-static unsigned short 
-emu_chip_load_rom(void);
-
-static void
-emu_chip_run(void);
-
-static void 
-emu_chip_decode_and_execute(void);
-
-static void 
-emu_chip_free(void);
-
-static inline unsigned short 
-emu_chip_getopcode(unsigned char, unsigned char);
-
-static void 
-emu_chip_draw(unsigned char vx, unsigned char vy, unsigned char n);
-
-static void 
-emu_chip_showdisplay(void);
-
-static void 
-emu_chip_showpixels(void);
-
-static inline void
-emu_chip_tick(void);
-
-static void 
-emu_chip_init(void)
+static void emu_chip_init(void)
 {
 
         //only define when linking with test_main.c
@@ -176,8 +152,7 @@ emu_chip_init(void)
         }
 }
 
-static unsigned short 
-emu_chip_load_rom(void)
+static unsigned short emu_chip_load_rom(void)
 {
         unsigned int i;
 
@@ -219,8 +194,7 @@ emu_chip_load_rom(void)
         free(buffer);
 }
 
-static void 
-emu_chip_decode_and_execute(void)
+static void emu_chip_decode_and_execute(void)
 {
         unsigned short opcode = emu_chip_getopcode(ram[pc], ram[pc + 1]);
 
@@ -461,8 +435,7 @@ emu_chip_decode_and_execute(void)
         }
 }
 
-static void 
-emu_chip_free(void)
+static void emu_chip_free(void)
 {
         unsigned int i;
 
@@ -481,16 +454,14 @@ emu_chip_free(void)
         }
 }
 
-static inline unsigned short 
-emu_chip_getopcode(unsigned char b1, unsigned char b2)
+static inline unsigned short emu_chip_getopcode(unsigned char b1, unsigned char b2)
 {
         unsigned short opcode = b1;
         return (opcode << 8) | b2;
 }
 
-static void
-emu_chip_run(void)
-{
+static void emu_chip_run(void)
+{ 
         unsigned int i; 
 
         SDL_Event event;
@@ -546,8 +517,7 @@ emu_chip_run(void)
         }
 }
 
-static void 
-emu_chip_draw(unsigned char vx, unsigned char vy, unsigned char n)
+static void emu_chip_draw(unsigned char vx, unsigned char vy, unsigned char n)
 {
         unsigned int i, j;
 
@@ -566,8 +536,7 @@ emu_chip_draw(unsigned char vx, unsigned char vy, unsigned char n)
 
 }
 
-static inline void
-emu_chip_tick(void)
+static inline void emu_chip_tick(void)
 {
         curr_time = SDL_GetTicks();
         if (prev_time <= curr_time) {
@@ -577,8 +546,7 @@ emu_chip_tick(void)
         }
 }
 
-static void 
-emu_chip_showdisplay(void)
+static void emu_chip_showdisplay(void)
 {
         unsigned int i;
 
@@ -591,8 +559,7 @@ emu_chip_showdisplay(void)
         }
 }
 
-static void 
-emu_chip_showpixels(void)
+static void emu_chip_showpixels(void)
 {
         unsigned int i;
 
@@ -609,8 +576,7 @@ emu_chip_showpixels(void)
         }
 }
 
-void
-_entrypoint_emu_chip(void)
+void _entrypoint_emu_chip(void)
 {
         emu_chip_init();
         emu_chip_run();

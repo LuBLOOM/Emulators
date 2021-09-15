@@ -224,11 +224,8 @@ extern char romname[1024];
 size_t maxsize;
 
 void _entrypoint_interface(void);
-
 static void interface_init(void);
-
 static void  interface_render(void);
-
 static void interface_free(void);
 
 static void interface_init(void)
@@ -299,7 +296,7 @@ static void interface_init(void)
 	up_dest.w = 32;
 	up_dest.h = 32;
 	up_dest.x = up_dest.w;
-	up_dest.y = (INTERFACE_HEIGHT - (up_dest.h))/2;
+	up_dest.y = (INTERFACE_HEIGHT - (up_dest.h*4))/2;
 	unsigned int up_bitmap_pixels_on[32*32] = {0};
 	unsigned int up_bitmap_pixels_off[32*32] = {0};
 	for (i = 0; i < (32 * 32); i++) {
@@ -320,7 +317,7 @@ static void interface_init(void)
 	down_dest.w = 32;
 	down_dest.h = 32;
 	down_dest.x = down_dest.w;
-	down_dest.y = (INTERFACE_HEIGHT - (down_dest.h*4))/2;
+	down_dest.y = (INTERFACE_HEIGHT - (down_dest.h))/2;
 	unsigned int down_bitmap_pixels_on[32*32] = {0};
 	unsigned int down_bitmap_pixels_off[32*32] = {0};
 	for (i = 0; i < (32 * 32); i++) {
@@ -436,6 +433,3 @@ void _entrypoint_interface(void)
 	interface_render();
 	interface_free();
 }
-
-
-
