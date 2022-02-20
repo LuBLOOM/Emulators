@@ -1,17 +1,11 @@
-#Chip Emulator Start
-CHIP_OBJS = chip/chip.o main.o
-CHIP_EXEC = emulators/emu_chip
-CHIPFLAGS :=
+CC = gcc
+SRC = $(wildcard src/*.c)
+LINKER = -lSDL2 -lSDL2_image -lSDL2_ttf -lGLEW -lGL -LGLU
+EXEC = ./bin/emud
 
-$(CHIP_EXEC) : $(CHIP_OBJS)
-	@echo "Linking" $@
-	$(CC) -o $@ $^ -lSDL2
+$(EXEC) : $(SRC)
+	$(CC) $^ -o $@ $(LINKER)
 
-$(CHIP_OBJS) : %.o : %.c
-	@echo "Compiling and assembling" $@
-	$(CC) -o $@ -c $< $(CHIPFLAGS)
-
-#Chip Emulator End
 clean:
-	rm $(CHIP_OBJS)
-	rm $(CHIP_EXEC)
+	rm $(EXEC)
+

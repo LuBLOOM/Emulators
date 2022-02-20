@@ -1,0 +1,12 @@
+#version 120
+
+uniform float eTime;
+uniform vec2  eResolution;
+
+void main()
+{
+	vec2 uv = (gl_FragCoord.xy/eResolution.xy)/eResolution.y;
+	vec3 col = vec3(sin(eTime), cos(eTime), 1.);
+	gl_FragColor = vec4(col, 1.);
+
+}
