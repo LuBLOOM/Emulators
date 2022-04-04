@@ -1,5 +1,0 @@
-#This script is used for testing chip 8 functionality
-gcc -D_TEST_ chip/chip.c test_main.c -o emu_chip -lSDL2
-
-#This script is used for testing the chip 8 with the interface
-gcc -D__CHIP__ interface/interface.c main.c chip/chip.c -o inter -lSDL2
