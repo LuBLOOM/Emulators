@@ -1,3 +1,5 @@
+/* main.c - where initialisation, rendering and process killing occurs */
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
@@ -9,7 +11,7 @@
 
 #include "../include/emud.h"
 #include "../include/shader.h"
-#include "../include/menu.h"
+#include "../include/chip.h"
 
 static struct timeval start_time, curr_time;
 
@@ -19,10 +21,22 @@ static void emud_free(void);
 
 int main(int argc, char **argv)
 {
-	emud_init("emud", 1200, 800, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-	if (menu_init("shaders/menu_shader.glvs", "shaders/menu_shader.glfs") < 0) return printf("Could not initialise menu\n");
+	debug = fopen(EMUD_LOG, "w");
+	
+	emud_init("emud!", 1200, 800, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+		  SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+
+	chip_init();
+	if (chip_load("roms/maze.ch8") == -1) {
+		fprintf(stderr, "an error occured, please check '%1$s' for more information...\n", EMUD_LOG);
+		return -1;
+	}
+	chip_exec();
+	
 	emud_render();
 	emud_free();
+	
+	fclose(debug);
 	return 0;
 }
 
@@ -43,8 +57,6 @@ static void emud_init(const char *title, unsigned w, unsigned h, unsigned x, uns
 	gettimeofday(&start_time, 0);
 	SDL_GetWindowSize(window, eResolution+0, eResolution+1);
 
-	printf("Resolution: %dx%d\n", *(eResolution+0), *(eResolution+1));
-
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_ALPHA_TEST);
 	glEnable(GL_BLEND);
@@ -60,7 +72,6 @@ static void emud_render()
 			}
 		}
 		glClear(GL_COLOR_BUFFER_BIT);
-		menu_render();
 		SDL_GL_SwapWindow(window);
 		
 		gettimeofday(&curr_time, 0);
@@ -70,7 +81,6 @@ static void emud_render()
 
 static void emud_free()
 {
-	menu_free();
 	free(eResolution);
 	SDL_DestroyWindow(window);
 	SDL_GL_DeleteContext(context);
