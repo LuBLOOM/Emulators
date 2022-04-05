@@ -41,9 +41,11 @@ static unsigned char  CHIP_FONT[80] = {
 	0xf0, 0x80, 0xf0, 0x80, 0xf0,
 	0xf0, 0x80, 0xf0, 0x80, 0x80,
 };
-static unsigned char  chip_display[CHIP_WIDTH * CHIP_HEIGHT];
-static unsigned int   chip_shader;
+static unsigned int   chip_display[CHIP_WIDTH * CHIP_HEIGHT];
 static unsigned int   chip_running;
+
+static unsigned int   chip_shader;
+static unsigned int   chip_texture;
 
 void chip_init(void);
 void chip_run(void);

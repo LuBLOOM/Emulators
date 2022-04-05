@@ -12,6 +12,7 @@
 #include "../include/emud.h"
 #include "../include/shader.h"
 #include "../include/chip.h"
+#include "../include/linear.h"
 
 static struct timeval start_time, curr_time;
 
@@ -23,9 +24,12 @@ int main(int argc, char **argv)
 {
 	debug = fopen(EMUD_LOG, "w");
 	
-	emud_init("emud!", 1200, 800, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		  SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+	emud_init("emud!", EMUD_SCREENWIDTH, EMUD_SCREENHEIGHT, SDL_WINDOWPOS_UNDEFINED,
+		  SDL_WINDOWPOS_UNDEFINED,SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
+	mat4_init(modelview);
+	mat4_ortho(projection, 0.0, EMUD_SCREENWIDTH, EMUD_SCREENHEIGHT, 0.0, 1.0, -1.0);
+	
 	chip_init();
 	if (chip_load("roms/maze.ch8") == -1) {
 		fprintf(stderr, "an error occured, please check '%1$s' for more information...\n", EMUD_LOG);
